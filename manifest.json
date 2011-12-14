@@ -1,0 +1,12 @@
+{
+  "name": "Xposter",
+  "version": "0.0.1",
+  "description": "Easily crosspost to various social networks",
+  "content_scripts": [
+  	{
+  		"matches": ["http://*.twitter.com/"],
+		  "js": ["jquery-1.7.1.min.js", "xposter.js"],
+      "css": ["css/xposter.css"]
+  	}
+  ]
+}
