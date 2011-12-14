@@ -16,15 +16,14 @@
   background-image: url(chrome-extension://__MSG_@@extension_id__/images/twitter_up.png);
 }
 
-.xgplus-up {
-  background-image: url(chrome-extension://__MSG_@@extension_id__/images/gplus_up.png);
+.xfacebook-up {
+  background-image: url(chrome-extension://__MSG_@@extension_id__/images/facebook_up.png);
 }
 
 .xtwitter-down {
   background-image: url(chrome-extension://__MSG_@@extension_id__/images/twitter_down.png);
 }
 
-.xgplus-down {
-  background-image: url(chrome-extension://__MSG_@@extension_id__/images/gplus_down.png);
+.xfacebook-down {
+  background-image: url(chrome-extension://__MSG_@@extension_id__/images/facebook_down.png);
 }
-

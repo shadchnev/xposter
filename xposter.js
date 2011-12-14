@@ -2,57 +2,89 @@ $(document).ready(function() {
   console.log("xposter.loaded. jQuery.version = " + $.fn.jquery);
   injectXPoster();
   state = {
-    twitter: true,
-    gplus: false
+    twitter: {enabled: true, insertButton: updateTweetButton},
+    facebook: {enabled: false, insertButton: insertGPlusButton}
   }
 })
 
 function injectXPoster() {
-  if (oldTwitterVersion()) injectOldTwitter();
+  setTimeout(function() {
+    if (twitterBoxPresent()) injectTwitterInterface();
+  }, 1000)
 }
 
-function oldTwitterVersion() {
-  return ($('.tweet-box .text-area').length > 0);
+function twitterBoxPresent() {
+  return ($('textarea.twitter-anywhere-tweet-box-editor').length > 0);
 }
 
-function injectOldTwitter() {
-  setInterval(function(){ // because Twitter redraws the interface after page load
-    if ($('.xposter').length == 0) {
+function postToGPlus() {
+  
+}
+
+function insertGPlusButton() {
+  $('<a />').attr('href', '#').addClass('xfacebook-button btn disabled').text('Share on Facebook').appendTo('.tweet-button-sub-container').click(postToGPlus);
+}
+
+function updateTweetButton() {
+  $('.tweet-button').addClass('xtwitter-button'); // to have a universal naming scheme for all buttons
+}
+
+function injectTwitterInterface() {
+  var interval = setInterval(function(){ // because Twitter redraws the interface after page load
+    if ($('.xposter').length == 0) {      
+      console.log('injected');
+      // clearInterval(interval);
       $("<div />").addClass('xposter').insertBefore('.text-area');
-      insertTwitter();
-      insertGPlus();
+      insert('twitter');
+      insert('facebook');
       matchUI2State();
   	}
-  }, 1000); 
+  }, 100); 
 }
 
 function matchUI2State() {
-  state.twitter ? enableTwitter() : disableTwitter();
-  state.gplus ? enableGPlus() : disableGPlus();
+  $('.tweet-button-sub-container .btn').hide();
+  for (e in state) {
+    state[e].enabled ? enable(e) : disable(e);
+    if (state[e].enabled) {
+      console.log("showing button for " + e);
+      $('.tweet-button-sub-container .x' + e + '-button').show();
+    }
+  }
 }
 
-function insertTwitter() {
-  $('<div />').addClass('xnetwork').addClass('xtwitter').appendTo('.xposter');	
-  enableTwitter();
+function toggle(element) {
+  if (state[element].enabled) return;
+  for (e in state) state[e].enabled = false;
+  state[element].enabled = true;
+  matchUI2State();  
 }
 
-function insertGPlus() {
-  $('<div />').addClass('xnetwork').addClass('xgplus').appendTo('.xposter');	
-  enableGPlus();
+function insert(element) {
+  $('<div />').addClass('xnetwork').addClass('x' + element).appendTo('.xposter').click(function() { toggle(element) });	
+  enable(element);  
+  state[element].insertButton();
 }
 
-function disableTwitter() {
-	$('.xtwitter').removeClass('xtwitter-up').addClass('xtwitter-down');
+function disable(element) {
+	$('.x' + element).removeClass('x' + element + '-up').addClass('x' + element + '-down');
 }
 
-function disableGPlus() {
-	$('.xgplus').removeClass('xgplus-up').addClass('xgplus-down');
+function enable(element) {
+	$('.x' + element).removeClass('x' + element + '-down').addClass('x' + element + '-up');
 }
 
-function enableTwitter() {
-	$('.xtwitter').removeClass('xtwitter-down').addClass('xtwitter-up');
-}
 
-function enableGPlus() {
-	$('.xgplus').removeClass('xgplus-down').addClass('xgplus-up');
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
