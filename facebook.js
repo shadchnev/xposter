@@ -1,6 +1,6 @@
 /*
  * Simple Facebook API wrapper, can handle graph or rest api calls via FB.api
- * Written by Zach Allia in 2011
+ * Written by Zach Allia in 2011, modified by E. Shadchnev
  *
  */
 (function($) {
@@ -19,11 +19,9 @@
         fbwindow = window.open(url,"fbconnect");
     	},
     	logout: function(callback) {
-            chrome.browserAction.setPopup({"popup":""});
     		FB.api("auth.revokeAuthorization", callback);
-    		window.open("https://www.facebook.com/logout.php?next=YOUR_URL&access_token=" + FB.token());
+    		window.open("https://www.facebook.com/logout.php?next=http://www.facebook.com&access_token=" + FB.token());
     		localStorage.clear();
-    	    chrome.browserAction.setPopup({"popup":""});
     	},
     	token: function() {
     		if(localStorage._fbtoken && localStorage._fbtoken != "false") {

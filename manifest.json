@@ -1,7 +1,7 @@
 {
   "name": "Xposter",
   "version": "0.0.1",
-  "description": "Easily crosspost to various social networks",
+  "description": "Easily crosspost from Twitter to Facebook",
   "background_page": "background.html",
   "content_scripts": [
   	{

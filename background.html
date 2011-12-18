@@ -11,7 +11,7 @@
           	if(FB.token()) {
     				  sendResponse({status: "already logged into facebook"});
     				} else {    					
-              sendResponse({status: "working on it..."});
+              sendResponse({status: "trying to log in"});
     					FB.login();
     				}                            
             break;
@@ -29,8 +29,13 @@
             FB.api('me/feed', {message: request.message, method:"post"}, function(response) {
               console.log("got reply from fb:");
               console.log(response);
-              if (response.id)
+              if (response.id) {
                 chrome.tabs.sendRequest(sender.tab.id, {action: "fb_post_successful"});
+              } else {
+                // something went wrong, let's logout
+                FB.logout();
+              }
+              
             })
             break;
             

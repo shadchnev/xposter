@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  state = {
+  state = { // state of tabs: on or off, and associated actions
     twitter: {enabled: true, insertButton: updateTweetButton, click: function(){}},
     facebook: {enabled: false, insertButton: insertFacebookButton, click: clickFacebookTab}
   }
@@ -7,7 +7,7 @@ $(document).ready(function() {
   $('textarea.twitter-anywhere-tweet-box-editor').on("keyup", textareaChange);
 })
 
-chrome.extension.onRequest.addListener(
+chrome.extension.onRequest.addListener( // fb posting is async, so we need this to learn that it was successful
   function(request, sender, sendResponse) {
     if (request.action == "fb_post_successful") {
       $(".twitter-anywhere-tweet-box-editor").val("");    
@@ -16,12 +16,11 @@ chrome.extension.onRequest.addListener(
 );
 
 function injectXPoster() {
-  setTimeout(function() {
-    if (twitterBoxPresent()) injectTwitterInterface();
-  }, 1000)
+  if (twitterBoxPresent()) 
+    injectTwitterInterface();
 }
 
-function textareaChange(event) {
+function textareaChange(event) { 
   if ($(event.target).val().length == 0) {
     $(".tweet-button-sub-container .btn").addClass("disabled");
   } else {
