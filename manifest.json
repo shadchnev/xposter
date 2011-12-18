@@ -2,11 +2,16 @@
   "name": "Xposter",
   "version": "0.0.1",
   "description": "Easily crosspost to various social networks",
+  "background_page": "background.html",
   "content_scripts": [
   	{
   		"matches": ["http://*.twitter.com/"],
 		  "js": ["jquery-1.7.1.min.js", "xposter.js"],
       "css": ["css/xposter.css"]
-  	}
+  	},
+	{
+		"matches": ["https://www.facebook.com/connect/login_success.html"],
+    "js": ["interceptor.js"]
+	}
   ]
 }

@@ -1,11 +1,19 @@
 $(document).ready(function() {
-  console.log("xposter.loaded. jQuery.version = " + $.fn.jquery);
-  injectXPoster();
   state = {
-    twitter: {enabled: true, insertButton: updateTweetButton},
-    facebook: {enabled: false, insertButton: insertGPlusButton}
+    twitter: {enabled: true, insertButton: updateTweetButton, click: function(){}},
+    facebook: {enabled: false, insertButton: insertFacebookButton, click: clickFacebookTab}
   }
+  injectXPoster();
+  $('textarea.twitter-anywhere-tweet-box-editor').on("keyup", textareaChange);
 })
+
+chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    if (request.action == "fb_post_successful") {
+      $(".twitter-anywhere-tweet-box-editor").val("");    
+    }
+  }
+);
 
 function injectXPoster() {
   setTimeout(function() {
@@ -13,16 +21,32 @@ function injectXPoster() {
   }, 1000)
 }
 
+function textareaChange(event) {
+  if ($(event.target).val().length == 0) {
+    $(".tweet-button-sub-container .btn").addClass("disabled");
+  } else {
+    $(".tweet-button-sub-container .btn").removeClass("disabled");
+  }
+}
+
 function twitterBoxPresent() {
   return ($('textarea.twitter-anywhere-tweet-box-editor').length > 0);
 }
 
-function postToGPlus() {
-  
+function postToFacebook() {
+  chrome.extension.sendRequest({action: "fb_post", message: $(".twitter-anywhere-tweet-box-editor").val()}, function(response) {
+    console.log(response.status)
+  });
 }
 
-function insertGPlusButton() {
-  $('<a />').attr('href', '#').addClass('xfacebook-button btn disabled').text('Share on Facebook').appendTo('.tweet-button-sub-container').click(postToGPlus);
+function clickFacebookTab(currentState) {
+  chrome.extension.sendRequest({action: "fb_login"}, function(response) {
+    console.log(response.status);
+  });
+}
+
+function insertFacebookButton() {
+  $('<a />').attr('href', '#').addClass('xfacebook-button btn primary-btn').text('Share on Facebook').appendTo('.tweet-button-sub-container').click(postToFacebook);
 }
 
 function updateTweetButton() {
@@ -53,7 +77,8 @@ function matchUI2State() {
   }
 }
 
-function toggle(element) {
+function selectTab(element) {
+	state[element].click(state[element].enabled);
   if (state[element].enabled) return;
   for (e in state) state[e].enabled = false;
   state[element].enabled = true;
@@ -61,7 +86,7 @@ function toggle(element) {
 }
 
 function insert(element) {
-  $('<div />').addClass('xnetwork').addClass('x' + element).appendTo('.xposter').click(function() { toggle(element) });	
+  $('<div />').addClass('xnetwork').addClass('x' + element).appendTo('.xposter').click(function() { selectTab(element) });	
   enable(element);  
   state[element].insertButton();
 }

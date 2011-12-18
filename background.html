@@ -1,0 +1,42 @@
+<html>
+  <script src="jquery-1.7.1.min.js" ></script>
+  <script src="facebook.js"></script>
+  <script>
+    console.log("setting the bg listener");
+    chrome.extension.onRequest.addListener(
+      function(request, sender, sendResponse) {          
+        console.log("got request:" + request);
+        switch (request.action) {
+          case "fb_login":
+          	if(FB.token()) {
+    				  sendResponse({status: "already logged into facebook"});
+    				} else {    					
+              sendResponse({status: "working on it..."});
+    					FB.login();
+    				}                            
+            break;
+            
+          case "fb_success_callback_intercept":
+            console.log("intercepted: " + sender.tab.url);
+            chrome.tabs.remove(sender.tab.id);
+            localStorage._fbtoken = sender.tab.url.split("#")[1].split("=")[1].split("&")[0];
+            sendResponse({}); 
+            break;
+          
+          case "fb_post":
+            console.log("posting to facebook: " + request.message);
+            sendResponse({});             
+            FB.api('me/feed', {message: request.message, method:"post"}, function(response) {
+              console.log("got reply from fb:");
+              console.log(response);
+              if (response.id)
+                chrome.tabs.sendRequest(sender.tab.id, {action: "fb_post_successful"});
+            })
+            break;
+            
+          default:
+            sendResponse({}); 
+        }          
+      });
+  </script>
+</html>
