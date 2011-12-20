@@ -6,7 +6,7 @@
     chrome.extension.onRequest.addListener(
       function(request, sender, sendResponse) {          
         console.log("got request:" + request);
-        switch (request.action) {
+        switch (request.action) {          
           case "fb_login":
           	if(FB.token()) {
     				  sendResponse({status: "already logged into facebook"});
